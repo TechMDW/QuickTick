@@ -52,6 +52,10 @@ func New(multiplier float64) *QuickTick {
 //
 // Use this function if you need to customize the clock's update frequency and starting time.
 func NewCustom(startTime time.Time, multiplier float64, updateInterval time.Duration) *QuickTick {
+	if updateInterval == 0 {
+		updateInterval = time.Millisecond
+	}
+
 	ac := &QuickTick{
 		multiplier:      multiplier,
 		tickerInterval:  updateInterval,
@@ -101,6 +105,10 @@ func NewCtx(ctx context.Context, multiplier float64) *QuickTick {
 //
 // Use this function if you need to customize the clock's update frequency and starting time, and also want to control the clock's lifecycle with a context.
 func NewCustomCtx(ctx context.Context, startTime time.Time, multiplier float64, updateInterval time.Duration) *QuickTick {
+	if updateInterval == 0 {
+		updateInterval = time.Millisecond
+	}
+
 	ac := &QuickTick{
 		multiplier:      multiplier,
 		tickerInterval:  updateInterval,
@@ -115,7 +123,7 @@ func NewCustomCtx(ctx context.Context, startTime time.Time, multiplier float64, 
 
 // Start clock
 func (ac *QuickTick) run() {
-	ticker := time.NewTicker(time.Millisecond)
+	ticker := time.NewTicker(ac.tickerInterval)
 	defer ticker.Stop()
 
 	for {
@@ -130,7 +138,7 @@ func (ac *QuickTick) run() {
 
 // Start clock with context
 func (ac *QuickTick) runWithContext(ctx context.Context) {
-	ticker := time.NewTicker(time.Millisecond)
+	ticker := time.NewTicker(ac.tickerInterval)
 	defer ticker.Stop()
 
 	for {
